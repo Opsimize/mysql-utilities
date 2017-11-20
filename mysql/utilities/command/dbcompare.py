@@ -415,6 +415,9 @@ def database_compare(server1_val, server2_val, db1, db2, options):
 
     _check_option_defaults(options)
     quiet = options.get("quiet", False)
+    include_tables = options.get("include_tables")
+    if include_tables:
+        include_tables = include_tables.split(",")
 
     # Connect to servers
     server1, server2 = server_connect(server1_val, server2_val,
@@ -460,6 +463,10 @@ def database_compare(server1_val, server2_val, db1, db2, options):
         debug_msgs = []
         # Set the object type
         obj_type = item[0]
+        table_name = item[1][0]
+
+        if include_tables and table_name not in include_tables:
+            continue
 
         q_obj1 = "{0}.{1}".format(quote_with_backticks(db1, server1_sql_mode),
                                   quote_with_backticks(item[1][0],
